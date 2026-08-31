@@ -1,0 +1,48 @@
+-- AdventureWorks2019
+-- Sales Analysis
+-- SQL Server
+
+-- 22. Number of orders per customer
+SELECT
+    c.CustomerID,
+    COUNT(soh.SalesOrderID) AS OrderCount
+FROM Sales.Customer AS c
+INNER JOIN Sales.SalesOrderHeader AS soh
+    ON c.CustomerID = soh.CustomerID
+GROUP BY c.CustomerID
+ORDER BY OrderCount DESC;
+
+
+-- 23. Total sales by year
+SELECT
+    YEAR(OrderDate) AS SalesYear,
+    SUM(TotalDue) AS TotalSales
+FROM Sales.SalesOrderHeader
+GROUP BY YEAR(OrderDate)
+ORDER BY SalesYear;
+
+
+-- 24. Top 10 products by quantity sold
+SELECT TOP 10
+    p.Name AS ProductName,
+    SUM(sod.OrderQty) AS TotalQuantity
+FROM Sales.SalesOrderDetail AS sod
+INNER JOIN Production.Product AS p
+    ON sod.ProductID = p.ProductID
+GROUP BY p.Name
+ORDER BY TotalQuantity DESC;
+
+
+-- 25. Category-level product and price analysis
+SELECT
+    pc.Name AS CategoryName,
+    COUNT(p.ProductID) AS ProductCount,
+    AVG(p.ListPrice) AS AveragePrice,
+    SUM(p.ListPrice) AS TotalListPrice
+FROM Production.Product AS p
+INNER JOIN Production.ProductSubcategory AS ps
+    ON p.ProductSubcategoryID = ps.ProductSubcategoryID
+INNER JOIN Production.ProductCategory AS pc
+    ON ps.ProductCategoryID = pc.ProductCategoryID
+GROUP BY pc.Name
+ORDER BY TotalListPrice DESC;
